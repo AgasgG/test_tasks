@@ -1,12 +1,14 @@
 ---  1.	Вывести средний чек в динамике (год–месяц) по магазинам
 WITH prepare AS (
-    SELECT c.shopId, 
+    SELECT с.Id,
+            c.shopId, 
             c.salesRub, 
             YEAR(c.[date]) as Y, 
             MONTH(c.[date]) as M 
                 FROM demodata.[check] as c
 )
-SELECT p.shopId AS 'ИД магазина', 
+SELECT p.shopId AS 'ИД магазина',
+        p.Id AS 'Чек',
         s.nameShop AS 'Магазин',
         ROUND(AVG(salesRub), 2) AS 'Средний чек', 
         CONCAT(Y, '-', M) AS 'Год-Месяц' 
@@ -15,15 +17,16 @@ SELECT p.shopId AS 'ИД магазина',
             JOIN demodata.shop s
             ON s.shopId = p.shopId
 
-GROUP BY s.nameShop, p.shopId, Y, M
+GROUP BY p.Id, s.nameShop, p.shopId, Y, M
 
-ORDER BY s.nameShop, p.shopId, Y,M
+ORDER BY s.nameShop, p.shopId, p.Id, Y,M
 ;
 
 
 --- 2.	Вывести средний чек в динамике (год-месяц) по форматам (поле format)
 WITH prepare AS (
-    SELECT c.salesRub, 
+    SELECT с.Id, 
+            c.salesRub, 
             YEAR(c.[date]) as Y, 
             MONTH(c.[date]) as M, 
             ws.[format] 
@@ -33,13 +36,14 @@ WITH prepare AS (
                 ON ws.shopId = c.shopId    
 )
 SELECT p.format AS 'Формат', 
+        p.Id AS 'Чек',             
         AVG(salesRub) AS 'Средняя стоимость', 
         CONCAT(Y, '-', M) AS 'Год-Месяц' 
             FROM prepare p
 
-GROUP BY p.format, Y, M
+GROUP BY p.Id, p.format, Y, M
 
-ORDER BY p.format, Y,M
+ORDER BY p.format, p.Id, Y,M
 ;
 
 
